@@ -529,6 +529,10 @@ endif
 storage-provisioner-image: out/storage-provisioner-$(GOARCH) ## Build storage-provisioner docker image
 	docker build -t $(STORAGE_PROVISIONER_IMAGE) -f deploy/storage-provisioner/Dockerfile  --build-arg arch=$(GOARCH) .
 
+.PHONY: storage-provisioner-image-wcj
+storage-provisioner-image-wcj: out/storage-provisioner-$(GOARCH) ## Build storage-provisioner docker image
+	docker build -t wcjohnson/minikube-storage-provisioner:latest -f deploy/storage-provisioner/Dockerfile  --build-arg arch=$(GOARCH) .
+
 .PHONY: kic-base-image
 kic-base-image: ## builds the base image used for kic.
 	docker rmi -f $(REGISTRY)/kicbase:$(KIC_VERSION)-snapshot || true
@@ -536,7 +540,7 @@ kic-base-image: ## builds the base image used for kic.
 
 .PHONY: upload-preloaded-images-tar
 upload-preloaded-images-tar: out/minikube # Upload the preloaded images for oldest supported, newest supported, and default kubernetes versions to GCS.
-	go run ./hack/preload-images/*.go 
+	go run ./hack/preload-images/*.go
 
 .PHONY: push-storage-provisioner-image
 push-storage-provisioner-image: storage-provisioner-image ## Push storage-provisioner docker image using gcloud
@@ -636,7 +640,7 @@ release-kvm-driver: install-kvm-driver checksum  ## Release KVM Driver
 	gsutil cp $(GOBIN)/docker-machine-driver-kvm2 gs://minikube/drivers/kvm/$(VERSION)/
 	gsutil cp $(GOBIN)/docker-machine-driver-kvm2.sha256 gs://minikube/drivers/kvm/$(VERSION)/
 
-site/themes/docsy/assets/vendor/bootstrap/package.js: ## update the website docsy theme git submodule 
+site/themes/docsy/assets/vendor/bootstrap/package.js: ## update the website docsy theme git submodule
 	git submodule update -f --init --recursive
 
 out/hugo/hugo:
@@ -668,7 +672,7 @@ compare: out/mkcmp out/minikube
 	mv out/minikube out/master.minikube
 	git checkout $(CURRENT_GIT_BRANCH)
 	out/mkcmp out/master.minikube out/$(CURRENT_GIT_BRANCH).minikube
-	
+
 
 .PHONY: help
 help:

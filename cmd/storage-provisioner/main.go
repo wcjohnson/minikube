@@ -25,7 +25,7 @@ import (
 	"k8s.io/minikube/pkg/storage"
 )
 
-var pvDir = "/tmp/hostpath-provisioner"
+var defaultPvDir = "/tmp/hostpath-provisioner"
 
 func main() {
 	// Glog requires that /tmp exists.
@@ -33,6 +33,9 @@ func main() {
 		fmt.Fprintf(os.Stderr, "Error creating tmpdir: %v\n", err)
 		os.Exit(1)
 	}
+
+	var pvDir string
+	flag.StringVar(&pvDir, "pvdir", defaultPvDir, "Path where persistent volumes should be stored.")
 	flag.Parse()
 
 	if err := storage.StartStorageProvisioner(pvDir); err != nil {
